@@ -1,0 +1,78 @@
+== ENCODING SIDE – Interview Explanations
+
+
+** read_and_validate_encode_args()
+
+"The read_and_validate_encode_args function validates command-line arguments for encoding. It ensures that the source image is a BMP file, verifies the presence of the secret file, and sets the output stego image name. This prevents invalid inputs from entering the encoding process."
+
+** open_files()
+
+"The open_files function opens the source image in read mode, the secret file in read mode, and the stego image in write mode. It ensures that all required file pointers are valid before proceeding with encoding."
+
+** get_image_size_for_bmp()
+
+"The get_image_size_for_bmp function reads the width and height from the BMP header at offset 18 and calculates the total pixel data size as width × height × 3. This determines the available capacity for LSB encoding."
+
+** check_capacity()
+
+"The check_capacity function calculates the total number of bytes required to encode the magic string, extension size, extension, file size, and secret data. Since LSB encoding uses one image byte per secret bit, it multiplies the total secret bytes by 8 and verifies that the image has sufficient pixel data before encoding."
+
+** copy_bmp_header()
+
+"The copy_bmp_header function copies the first 54 bytes of the BMP file directly to the stego image. This preserves the image metadata and ensures the output file remains a valid BMP format."
+
+** encode_magic_string()
+
+"The encode_magic_string function embeds a predefined identifier at the beginning of the image data using LSB encoding. During decoding, this string is verified to confirm that the image contains hidden data."
+
+** encode_data_to_image()
+
+"The encode_data_to_image function encodes multiple bytes into the image by iterating through the data and calling encode_byte_to_lsb for each byte. It acts as a bridge between higher-level encoding logic and bit-level manipulation."
+
+** encode_byte_to_lsb()
+
+"The encode_byte_to_lsb function hides one character inside eight image bytes. It clears the LSB of each image byte using bitwise AND with 0xFE and inserts one bit of the secret data using bitwise OR. This ensures minimal distortion while embedding data."
+
+** encode_secret_file_size()
+
+"The encode_secret_file_size function embeds the size of the secret file into the image so that the decoder knows how many bytes to extract during decoding."
+
+** encode_secret_file_data()
+
+"The encode_secret_file_data function reads each byte of the secret file and encodes it into the image using LSB substitution. It ensures the entire file content is hidden within the pixel data."
+
+
+== DECODING SIDE – Interview Explanations
+
+
+** read_and_validate_decode_args()
+
+"The read_and_validate_decode_args function verifies that the provided input is a valid BMP file and sets the output file name for the extracted secret data."
+
+** open_decode_files()
+
+"The open_decode_files function opens the stego image in read mode and prepares the output file in write mode to store the extracted secret data."
+
+** decode_magic_string()
+
+"The decode_magic_string function extracts the embedded magic string from the image and compares it with the expected value. If it does not match, decoding is stopped to prevent processing invalid images."
+
+** decode_lsb_to_byte()
+
+"The decode_lsb_to_byte function reconstructs a byte from the LSBs of eight image bytes. It extracts each LSB using bitwise AND with 1, shifts the result byte left to make space, and inserts the extracted bit using bitwise OR. This reverses the LSB encoding process."
+
+** decode_data_from_image()
+
+"The decode_data_from_image function repeatedly calls decode_lsb_to_byte to extract multiple bytes from the image. It reconstructs higher-level data such as file size, extension, and secret content."
+
+** decode_secret_file_size()
+
+"The decode_secret_file_size function extracts the embedded file size so that the decoder knows exactly how many bytes to read from the image."
+
+** decode_secret_file_extn()
+
+"The decode_secret_file_extn function retrieves the encoded file extension so that the output file can be reconstructed with the correct type."
+
+** decode_secret_file_data()
+
+"The decode_secret_file_data function extracts the hidden file content byte by byte using LSB decoding and writes it to the output file."
