@@ -2,11 +2,6 @@
 /*
                                 --- Image Steganography (LSB Technique) ---
 
-     Name : Bhuvaneshwaran P
-       ID : 25036B_092
-Start date: 10/02/2026
- End date : 25/02/2026
-
 DESCRIPTION:
              This project implements Image Steganography in C using the Least Significant Bit (LSB) technique
  to securely hide secret data inside a BMP image. The system embeds a magic string, file extension, 
